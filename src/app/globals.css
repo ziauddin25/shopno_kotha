@@ -116,6 +116,16 @@
   body {
     @apply bg-background text-foreground;
   }
+  a,
+  button,
+  [role="button"],
+  input[type="submit"] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
   html {
     @apply scroll-smooth;
     -webkit-text-size-adjust: 100%;

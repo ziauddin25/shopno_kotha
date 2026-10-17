@@ -98,11 +98,20 @@ export interface Dua {
   isDemo: boolean;
 }
 
+export interface Tag {
+  id: string;
+  slug: string;
+  name: LocalizedText;
+}
+
 export interface SearchParams {
   query?: string;
   locale?: Locale;
   categoryId?: string;
   limit?: number;
+  /** 1-based. Only meaningful together with `pageSize`. */
+  page?: number;
+  pageSize?: number;
 }
 
 export interface SearchResult {
@@ -110,4 +119,43 @@ export interface SearchResult {
   total: number;
   query: string;
   categoryId: string | null;
+  page: number;
+  pageSize: number;
+  totalPages: number;
 }
+
+/**
+ * One surface form a reader might type for a dream topic. `isRomanised` marks
+ * Banglish renderings ("kharap shopno") that have no single script to match on.
+ */
+export interface DreamTopicAlias {
+  text: string;
+  locale: Locale;
+  isRomanized: boolean;
+}
+
+/**
+ * A searchable dream concept ("disturbing dream", "types of dreams") with the
+ * published content that addresses it. Assembled by the repository layer; the
+ * search service ranks and hydrates it into reader-facing results.
+ */
+export interface DreamTopic {
+  id: string;
+  slug: string;
+  title: LocalizedText;
+  summary: LocalizedText;
+  categoryId: string | null;
+  aliases: DreamTopicAlias[];
+  articleIds: string[];
+  duaIds: string[];
+  sourceIds: string[];
+  isDemo: boolean;
+}
+
+/**
+ * Strength of the evidence a topic leans on, derived from its linked
+ * `sources.type`. It is deliberately coarse: it tells a reader whether a topic
+ * rests on scripture, scholarly interpretation or general educational copy —
+ * never that a dream has a fixed meaning.
+ */
+export type DreamEvidenceTier = "scripture" | "scholarly" | "educational";

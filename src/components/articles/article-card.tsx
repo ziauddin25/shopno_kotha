@@ -26,7 +26,7 @@ export function ArticleCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-colors hover:border-forest/25",
+        "group relative flex h-full flex-col gap-4 rounded-2xl border border-border bg-card p-6 shadow-xs transition-all hover:-translate-y-0.5 hover:border-forest/25 hover:shadow-sm",
         className,
       )}
     >
@@ -50,7 +50,7 @@ export function ArticleCard({
         ) : null}
       </div>
 
-      <h3 className="text-pretty text-base font-semibold tracking-tight text-foreground sm:text-lg">
+      <h3 className="text-pretty text-lg font-semibold leading-snug tracking-tight text-foreground sm:text-xl">
         <Link
           href={localizePath(locale, `/articles/${article.slug}`)}
           className="outline-none after:absolute after:inset-0 focus-visible:underline"
@@ -59,7 +59,7 @@ export function ArticleCard({
         </Link>
       </h3>
 
-      <p className="line-clamp-3 text-pretty text-sm leading-relaxed text-muted-foreground">
+      <p className="line-clamp-3 text-pretty text-base leading-relaxed text-muted-foreground">
         {article.summary}
       </p>
 

@@ -18,7 +18,6 @@ export function CategoryGrid({
             category={category}
             locale={locale}
             articleCount={category.articleCount ?? counts[category.id]}
-            latest={category.latest}
           />
         </li>
       ))}

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ArticleList } from "@/components/articles/article-list";
 import { EmptyState } from "@/components/common/empty-state";
 import { ErrorState } from "@/components/common/error-state";
+import { DreamSearchResults } from "@/components/dreams/dream-search-results";
 import { ArticleGridSkeleton, FilterRowSkeleton } from "@/components/common/skeletons";
 import { SearchBox } from "@/components/search/search-box";
 import { isLocale, localizePath } from "@/lib/i18n";
@@ -123,6 +124,8 @@ async function SearchStream({
           );
         })}
       </div>
+
+      <DreamSearchResults query={q} locale={locale} />
 
       <div className="space-y-2">
         <h2 className="text-lg font-semibold tracking-tight text-foreground">

@@ -6,6 +6,7 @@ import { RelatedArticles } from "@/components/articles/related-articles";
 import { ShareButton } from "@/components/articles/share-button";
 import { NoticeBox } from "@/components/common/notice-box";
 import { SourceReferenceCard } from "@/components/sources/source-reference-card";
+import { VerificationBadge } from "@/components/common/verification-badge";
 import { Badge } from "@/components/ui/badge";
 import { localizePath } from "@/lib/i18n";
 import { formatDate, formatNumber } from "@/lib/format";
@@ -14,6 +15,11 @@ import { getAllArticles } from "@/lib/repositories/article-repository";
 import { getArticleDetailData } from "@/lib/services/article-service";
 import { getMessages } from "@/messages";
 import type { Locale, SourceReference } from "@/types";
+
+// Reads uncached repository data (the mock data source is intentionally not
+// cache-wrapped), so this route blocks on the server instead of prerendering a
+// static shell. See the cache-components migration guide.
+export const instant = false;
 
 export async function generateStaticParams() {
   const articles = await getAllArticles();
@@ -65,9 +71,9 @@ export default async function ArticlePage({
   const isForeignLanguage = article.locale !== locale;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
-        <article className="min-w-0">
+    <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-14">
+        <article className="min-w-0 lg:max-w-3xl">
           <Link
             href={localizePath(locale, "/islamic-dreams")}
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-forest"
@@ -91,17 +97,22 @@ export default async function ArticlePage({
                 </Badge>
               ) : null}
               {article.isDemo ? (
-                <Badge variant="outline" className="rounded-full text-[0.7rem] text-muted-foreground">
-                  {m.common.demoBadge}
-                </Badge>
+                <VerificationBadge
+                  status="demo"
+                  labels={{
+                    checked: m.common.verificationChecked,
+                    pending: m.common.verificationPending,
+                    demo: m.common.verificationDemo,
+                  }}
+                />
               ) : null}
             </div>
 
-            <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            <h1 className="text-balance text-3xl font-semibold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               {article.title}
             </h1>
 
-            <p className="text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <p className="max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg sm:leading-8">
               {article.summary}
             </p>
 
@@ -126,12 +137,6 @@ export default async function ArticlePage({
               className="mt-6"
             >
               {article.locale === "bn" ? m.article.languageNoticeBn : m.article.languageNoticeEn}
-            </NoticeBox>
-          ) : null}
-
-          {article.isDemo ? (
-            <NoticeBox tone="demo" title={m.common.demoNoticeTitle} className="mt-6">
-              {m.article.demoBodyNote}
             </NoticeBox>
           ) : null}
 

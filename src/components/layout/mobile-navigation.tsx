@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, Search } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -54,10 +54,10 @@ export function MobileNavigation({
           <DialogTitle className="text-base font-semibold">{labels.title}</DialogTitle>
           <DialogClose
             render={
-              <Button variant="outline" size="sm" aria-label={labels.close} />
+              <Button variant="ghost" size="icon" aria-label={labels.close} />
             }
           >
-            {labels.close}
+            <X className="size-5" aria-hidden />
           </DialogClose>
         </div>
         <DialogDescription className="sr-only">{labels.description}</DialogDescription>

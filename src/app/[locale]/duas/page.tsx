@@ -10,6 +10,11 @@ import { getDuasPageData } from "@/lib/services/article-service";
 import { getMessages } from "@/messages";
 import type { Locale, SourceReference } from "@/types";
 
+// Reads uncached repository data (the mock data source is intentionally not
+// cache-wrapped), so this route blocks on the server instead of prerendering a
+// static shell. See the cache-components migration guide.
+export const instant = false;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) return {};

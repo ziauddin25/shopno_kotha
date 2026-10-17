@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, CircleSlash, Quote, ShieldCheck } from "lucide-react";
-import { NoticeBox } from "@/components/common/notice-box";
 import { Button } from "@/components/ui/button";
 import { isLocale, localizePath } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/metadata";
@@ -25,8 +24,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const a = getMessages(locale).about;
-  const m = getMessages(locale);
-
   return (
     <div className="mx-auto w-full max-w-4xl space-y-12 px-4 py-12 sm:px-6 sm:py-16">
       <header className="space-y-3">
@@ -99,10 +96,6 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </ul>
         </div>
       </section>
-
-      <NoticeBox tone="demo" title={m.common.demoNoticeTitle}>
-        {m.common.demoNoticeBody}
-      </NoticeBox>
 
       <div className="flex flex-wrap gap-3">
         <Button asChild size="sm">

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { NoticeBox } from "@/components/common/notice-box";
 import { VerificationBadge } from "@/components/common/verification-badge";
@@ -16,7 +15,7 @@ export function ArticleToc({ blocks, locale }: { blocks: ArticleBlock[]; locale:
   return (
     <nav
       aria-label={m.article.toc}
-      className="rounded-xl border border-border bg-card/70 p-4 text-sm"
+      className="rounded-2xl border border-border bg-card p-5 text-sm shadow-xs"
     >
       <p className="mb-3 text-xs font-semibold tracking-[0.14em] text-gold uppercase">
         {m.article.toc}
@@ -102,22 +101,21 @@ export function ArticleBody({
 }) {
   const m = getMessages(locale);
   const headings = buildHeadingEntries(blocks);
-  let headingCursor = 0;
+  const headingEntries = new Map(headings.map((heading) => [heading.blockIndex, heading]));
 
   return (
     <div className={cn("space-y-5", className)}>
       {blocks.map((block, index) => {
         switch (block.type) {
           case "heading": {
-            const entry = headings[headingCursor];
-            headingCursor += 1;
+            const entry = headingEntries.get(index);
             const id = entry?.id;
             if (block.level === 3) {
               return (
                 <h3
                   key={index}
                   id={id}
-                  className="pt-2 text-base font-semibold tracking-tight text-foreground"
+                  className="scroll-mt-24 pt-3 text-lg font-semibold tracking-tight text-foreground sm:text-xl"
                 >
                   {block.text}
                 </h3>
@@ -127,7 +125,7 @@ export function ArticleBody({
               <h2
                 key={index}
                 id={id}
-                className="scroll-mt-24 pt-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl"
+                className="scroll-mt-24 pt-5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl"
               >
                 {block.text}
               </h2>
@@ -137,7 +135,7 @@ export function ArticleBody({
             return block.ordered ? (
               <ol
                 key={index}
-                className="list-decimal space-y-2 pl-5 text-pretty text-[1.02rem] leading-[1.85] text-foreground/90 marker:text-forest"
+                className="list-decimal space-y-3 pl-5 text-pretty text-base leading-[1.9] text-foreground/90 marker:text-forest sm:text-lg"
               >
                 {block.items.map((item) => (
                   <li key={item} className="pl-1">
@@ -148,7 +146,7 @@ export function ArticleBody({
             ) : (
               <ul
                 key={index}
-                className="list-disc space-y-2 pl-5 text-pretty text-[1.02rem] leading-[1.85] text-foreground/90 marker:text-forest"
+                className="list-disc space-y-3 pl-5 text-pretty text-base leading-[1.9] text-foreground/90 marker:text-forest sm:text-lg"
               >
                 {block.items.map((item) => (
                   <li key={item} className="pl-1">
@@ -163,7 +161,7 @@ export function ArticleBody({
                 key={index}
                 className="rounded-r-xl border-l-3 border-gold/60 bg-gold-soft/60 px-5 py-4"
               >
-                <p className="text-pretty text-[1.02rem] leading-[1.85] text-foreground/90 italic">
+                <p className="text-pretty text-base leading-[1.9] text-foreground/90 italic sm:text-lg">
                   {block.text}
                 </p>
                 {block.attribution ? (

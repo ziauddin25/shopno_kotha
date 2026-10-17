@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { Mail, MessageSquare } from "lucide-react";
 import { NoticeBox } from "@/components/common/notice-box";
 import { ContactForm } from "@/components/contact/contact-form";
 import { isLocale } from "@/lib/i18n";
@@ -47,9 +46,6 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         </NoticeBox>
       </section>
 
-      <NoticeBox tone="demo" title={m.common.demoNoticeTitle}>
-        {m.common.demoNoticeBody}
-      </NoticeBox>
     </div>
   );
 }

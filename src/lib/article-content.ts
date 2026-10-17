@@ -4,6 +4,7 @@ export interface HeadingEntry {
   id: string;
   text: string;
   level: 2 | 3;
+  blockIndex: number;
 }
 
 export function headingId(text: string, index: number): string {
@@ -24,12 +25,13 @@ export function buildHeadingEntries(blocks: ArticleBlock[]): HeadingEntry[] {
   const entries: HeadingEntry[] = [];
   let headingIndex = 0;
 
-  for (const block of blocks) {
+  for (const [blockIndex, block] of blocks.entries()) {
     if (block.type === "heading") {
       entries.push({
         id: headingId(block.text, headingIndex),
         text: block.text,
         level: block.level,
+        blockIndex,
       });
       headingIndex += 1;
     }

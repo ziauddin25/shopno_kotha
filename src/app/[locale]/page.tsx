@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { ArticleList } from "@/components/articles/article-list";
 import { FeaturedArticle } from "@/components/articles/featured-article";
 import { CategoryGrid } from "@/components/categories/category-grid";
-import { NoticeBox } from "@/components/common/notice-box";
 import { SectionHeading } from "@/components/common/section-heading";
 import { EditorialTrustSection } from "@/components/home/editorial-trust-section";
 import { GuidanceCards } from "@/components/home/guidance-cards";
@@ -14,6 +13,11 @@ import { pageMetadata } from "@/lib/metadata";
 import { getHomePageData } from "@/lib/services/article-service";
 import { getMessages } from "@/messages";
 import type { Locale } from "@/types";
+
+// Reads uncached repository data (the mock data source is intentionally not
+// cache-wrapped), so this route blocks on the server instead of prerendering a
+// static shell. See the cache-components migration guide.
+export const instant = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -42,11 +46,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <HomeHero locale={locale} />
 
-      <div className="mx-auto w-full max-w-6xl space-y-16 px-4 py-12 sm:px-6 sm:py-16">
-        <NoticeBox tone="demo" title={m.common.demoNoticeTitle}>
-          {m.common.demoNoticeBody}
-        </NoticeBox>
-
+      <div className="mx-auto w-full max-w-6xl space-y-20 px-4 py-12 sm:px-6 sm:py-20">
         {featured ? (
           <section className="space-y-5" aria-labelledby="featured-heading">
             <SectionHeading

@@ -13,20 +13,18 @@ export interface HomePageData {
 }
 
 export async function getHomePageData(): Promise<HomePageData> {
-  const [featured, published, categories, all] = await Promise.all([
+  const [featured, latestPage, categories, facts] = await Promise.all([
     articleRepository.getFeaturedArticle(),
-    articleRepository.getPublishedArticles(),
+    articleRepository.listPublishedArticles({ pageSize: 5 }),
     categoryRepository.getAllCategories(),
-    articleRepository.getAllArticles(),
+    articleRepository.getPublishedArticleFacts(),
   ]);
 
-  const latest = published.filter((article) => article.id !== featured?.id).slice(0, 4);
+  const latest = latestPage.items.filter((article) => article.id !== featured?.id).slice(0, 4);
 
   const withCounts = categories.map((category) => ({
     ...category,
-    articleCount: all.filter(
-      (article) => article.categoryId === category.id && article.status === "published",
-    ).length,
+    articleCount: facts.filter((fact) => fact.categoryId === category.id).length,
   }));
 
   return { featured, latest, categories: withCounts };
@@ -86,15 +84,13 @@ export interface CategoryOverviewItem extends Category {
 }
 
 export async function getCategoryOverview(): Promise<CategoryOverviewItem[]> {
-  const [categories, all] = await Promise.all([
+  const [categories, facts] = await Promise.all([
     categoryRepository.getAllCategories(),
-    articleRepository.getAllArticles(),
+    articleRepository.getPublishedArticleFacts(),
   ]);
 
   return categories.map((category) => {
-    const published = all
-      .filter((article) => article.categoryId === category.id && article.status === "published")
-      .sort((a, b) => (b.publishedAt ?? "").localeCompare(a.publishedAt ?? ""));
+    const published = facts.filter((fact) => fact.categoryId === category.id);
     return {
       ...category,
       articleCount: published.length,

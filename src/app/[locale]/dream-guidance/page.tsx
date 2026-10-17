@@ -3,12 +3,20 @@ import { notFound } from "next/navigation";
 import { ArrowRight, CheckCircle2, CircleSlash } from "lucide-react";
 import { DuaCard } from "@/components/duas/dua-card";
 import { NoticeBox } from "@/components/common/notice-box";
+import { DreamSearchBox } from "@/components/dreams/dream-search-box";
+import { DreamSearchResults, DreamTopicBrowser } from "@/components/dreams/dream-search-results";
 import { Button } from "@/components/ui/button";
 import { isLocale, localizePath } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/metadata";
 import { getDuasPageData } from "@/lib/services/article-service";
+import { getDreamTopicCatalog } from "@/lib/services/dream-search-service";
 import { getMessages } from "@/messages";
 import type { Locale, SourceReference } from "@/types";
+
+// Reads uncached repository data (the mock data source is intentionally not
+// cache-wrapped), so this route blocks on the server instead of prerendering a
+// static shell. See the cache-components migration guide.
+export const instant = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -24,14 +32,20 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function DreamGuidancePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const g = getMessages(locale).dreamGuidance;
   const m = getMessages(locale);
+
+  const query = await searchParams;
+  const dreamQuery = typeof query.dream === "string" ? query.dream : undefined;
+  const dreamCatalog = dreamQuery?.trim() ? null : await getDreamTopicCatalog();
 
   const { duas, sources } = await getDuasPageData();
   const sourceMap: Record<string, SourceReference> = Object.fromEntries(
@@ -40,7 +54,7 @@ export default async function DreamGuidancePage({
   const badDreamDua = duas.find((dua) => dua.slug === "dua-bad-dream");
 
   return (
-    <div className="mx-auto w-full max-w-4xl space-y-12 px-4 py-12 sm:px-6 sm:py-16">
+    <div className="mx-auto w-full max-w-6xl space-y-12 px-4 py-12 sm:px-6 sm:py-16">
       <header className="space-y-4">
         <p className="text-xs font-semibold tracking-[0.18em] text-gold uppercase">
           {m.home.heroEyebrow}
@@ -52,6 +66,36 @@ export default async function DreamGuidancePage({
           {g.description}
         </p>
       </header>
+
+      <section className="space-y-6">
+        <div className="max-w-2xl space-y-2">
+          <p className="text-xs font-semibold tracking-[0.18em] text-gold uppercase">
+            {m.dreamSearch.eyebrow}
+          </p>
+          <h2 className="text-balance text-lg font-semibold tracking-tight text-foreground sm:text-xl">
+            {m.dreamSearch.title}
+          </h2>
+          <p className="text-pretty text-sm leading-relaxed text-muted-foreground">
+            {m.dreamSearch.description}
+          </p>
+        </div>
+        <DreamSearchBox
+          action={localizePath(locale, "/dream-guidance")}
+          param="dream"
+          fieldLabel={m.dreamSearch.fieldLabel}
+          placeholder={m.dreamSearch.placeholder}
+          submitLabel={m.dreamSearch.submit}
+          defaultValue={dreamQuery}
+        />
+        <DreamSearchResults query={dreamQuery} locale={locale} />
+        {dreamCatalog ? (
+          <DreamTopicBrowser
+            topics={dreamCatalog}
+            locale={locale}
+            heading={m.dreamSearch.browseHeading}
+          />
+        ) : null}
+      </section>
 
       <NoticeBox tone="info" title={g.introTitle}>
         {g.introBody}
@@ -140,16 +184,16 @@ export default async function DreamGuidancePage({
       </section>
 
       <div className="flex flex-wrap gap-3">
-        <Button asChild size="sm">
+        <Button asChild size="lg" className="h-11 px-5">
           <Link href={localizePath(locale, "/duas")}>
             {g.ctaDuas}
             <ArrowRight className="size-4" aria-hidden />
           </Link>
         </Button>
-        <Button asChild variant="outline" size="sm">
+        <Button asChild variant="outline" size="lg" className="h-11 px-5">
           <Link href={localizePath(locale, "/sources")}>{g.ctaSources}</Link>
         </Button>
-        <Button asChild variant="ghost" size="sm">
+        <Button asChild variant="ghost" size="lg" className="h-11 px-5">
           <Link href={localizePath(locale, "/search")}>{g.ctaSearch}</Link>
         </Button>
       </div>

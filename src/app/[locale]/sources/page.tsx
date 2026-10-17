@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
-import { NoticeBox } from "@/components/common/notice-box";
 import { VerificationBadge } from "@/components/common/verification-badge";
 import { SourceReferenceCard } from "@/components/sources/source-reference-card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,11 @@ import { pageMetadata } from "@/lib/metadata";
 import { getSourcesPageData } from "@/lib/services/article-service";
 import { getMessages } from "@/messages";
 import type { Locale } from "@/types";
+
+// Reads uncached repository data (the mock data source is intentionally not
+// cache-wrapped), so this route blocks on the server instead of prerendering a
+// static shell. See the cache-components migration guide.
+export const instant = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -131,9 +135,6 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
         </Button>
       </section>
 
-      <NoticeBox tone="demo" title={m.common.demoNoticeTitle}>
-        {m.common.demoNoticeBody}
-      </NoticeBox>
     </div>
   );
 }
